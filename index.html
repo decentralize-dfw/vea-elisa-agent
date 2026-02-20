@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Virtually Ever After</title>
+  <meta name="description"
+        content="Virtually Ever After — Creative platform at the intersection of architecture, spatial design, and digital technology. Founded in Luxembourg." />
+  <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 95,50 50,95 5,50' fill='%23c8b89a'/></svg>" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #ffffff;
+      --surface:  #f4f4f4;
+      --border:   rgba(0,0,0,0.1);
+      --text:     #111111;
+      --muted:    #888888;
+      --accent:   #111111;
+      --accent-d: #333333;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    h1, h2, h3, h4 { font-weight: 500; letter-spacing: -0.02em; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 0 40px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+    .nav-logo svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--accent);
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      border: 1px solid rgba(0,0,0,0.25) !important;
+      color: var(--text) !important;
+      padding: 7px 16px;
+      border-radius: 3px;
+      transition: background 0.2s, border-color 0.2s !important;
+    }
+    .nav-cta:hover {
+      background: rgba(0,0,0,0.06) !important;
+      border-color: rgba(0,0,0,0.5) !important;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 20%, rgba(0,0,0,0.02) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 10% 80%, rgba(0,0,0,0.015) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    /* Grid lines */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.055) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      opacity: 0.7;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 7vw, 88px);
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      font-weight: 300;
+      color: var(--text);
+      max-width: 780px;
+      margin-bottom: 32px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero-desc {
+      max-width: 480px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 44px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 3px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-accent {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    .btn-accent:hover {
+      background: var(--accent-d);
+      border-color: var(--accent-d);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border-color: var(--border);
+    }
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: rgba(0,0,0,0.25);
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      right: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.4;
+    }
+    .hero-scroll::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--muted);
+    }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 100px 40px; }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.6;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 64px;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 40px;
+    }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      max-width: 1100px;
+    }
+    .service-card {
+      padding: 48px 36px;
+      border-right: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .service-card:last-child { border-right: none; }
+    .service-card:hover { background: rgba(0,0,0,0.02); }
+    .service-num {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      opacity: 0.5;
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+    .service-card h3 {
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .service-card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .service-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .service-list li {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .service-list li::before {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background: var(--text);
+      opacity: 0.3;
+      flex-shrink: 0;
+    }
+
+    /* ── WORK ── */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      max-width: 1100px;
+    }
+    .work-item {
+      background: var(--bg);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+    .work-item:hover { background: rgba(0,0,0,0.02); }
+    .work-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .work-year {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      opacity: 0.5;
+    }
+    .work-arrow {
+      font-size: 12px;
+      color: var(--muted);
+      transition: color 0.2s, transform 0.2s;
+    }
+    .work-item:hover .work-arrow {
+      color: var(--accent);
+      transform: translate(2px, -2px);
+    }
+    .work-title {
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .work-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .work-tag {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 3px 8px;
+    }
+    .work-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 400px;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      max-width: 1100px;
+      align-items: start;
+    }
+    .about-text h2 { margin-bottom: 24px; }
+    .about-text p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-founder {
+      padding: 36px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    .founder-role {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.6;
+      margin-bottom: 16px;
+    }
+    .founder-name {
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .founder-bio {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .founder-credentials {
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .credential {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .credential::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.4;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* ── VERA SECTION ── */
+    .vera-section {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .vera-inner {
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .vera-chat-preview {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+    .vcp-header {
+      background: #111111;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .vcp-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .vcp-mark svg { width: 12px; height: 12px; fill: #ffffff; }
+    .vcp-name { font-size: 12px; color: #e0e0e0; font-weight: 500; }
+    .vcp-status { font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+    .vcp-body { padding: 20px 16px; display: flex; flex-direction: column; gap: 10px; background: #f8f8f8; }
+    .vcp-msg {
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 10px;
+      border-bottom-left-radius: 2px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #333333;
+      line-height: 1.55;
+      max-width: 85%;
+    }
+    .vcp-msg.user {
+      background: #111111;
+      border-color: transparent;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 2px;
+      align-self: flex-end;
+      color: #ffffff;
+    }
+    .vera-info h2 { margin-bottom: 20px; }
+    .vera-info p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    /* ── CONTACT ── */
+    .contact-inner {
+      max-width: 600px;
+    }
+    .contact-inner h2 { margin-bottom: 20px; }
+    .contact-inner > p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 48px;
+    }
+    .contact-items {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      transition: color 0.2s;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-item:last-child { border-bottom: none; }
+    .contact-item:hover { color: var(--text); }
+    .contact-item-label {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.6;
+      min-width: 60px;
+      flex-shrink: 0;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    footer .logo svg { width: 12px; height: 12px; fill: var(--accent); }
+    footer .copy {
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.5;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      nav .nav-links { display: none; }
+      section { padding: 72px 20px; }
+      .hero { padding: 0 20px 72px; }
+      .divider { margin: 0 20px; }
+      .hero-scroll { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .service-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .service-card:last-child { border-bottom: none; }
+      .work-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .vera-inner { grid-template-columns: 1fr; gap: 48px; }
+      footer { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L22 12L12 22L2 12Z"/></svg>
+      Virtually Ever After
+    </a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact" class="nav-cta">Get in Touch</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-eyebrow">Luxembourg · Est. 2025</div>
+    <h1>Architecture<br />meets the<br /><em>digital world</em></h1>
+    <p class="hero-desc">
+      VEA is a creative platform at the intersection of spatial design, real-time 3D environments, and emerging technology — dissolving the boundary between the physical and the digital.
+    </p>
+    <div class="hero-actions">
+      <a href="#work" class="btn btn-accent">View Work</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-label">What We Do</div>
+    <h2 class="section-title">Three disciplines.<br />One spatial vision.</h2>
+    <p class="section-sub">
+      We design the digital worlds that architecture, brands, and culture inhabit — from interactive 3D environments to identity systems and cinematic content.
+    </p>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-num">01</div>
+        <h3>Worldbuilding</h3>
+        <p>Designing the digital space a studio or brand inhabits — from navigable 3D environments to interactive archives and hybrid galleries.</p>
+        <ul class="service-list">
+          <li>Atmospheric Spatial Interfaces</li>
+          <li>Web-based 3D Interactivity</li>
+          <li>Hybrid Spatial Gallery</li>
+          <li>Index as Mapping</li>
+          <li>Exhibition Design</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-num">02</div>
+        <h3>Identity Building</h3>
+        <p>Brand codes constructed for spatial and digital environments. Architectural precision applied to visual language — consistent across every physical and digital touchpoint.</p>
+        <ul class="service-list">
+          <li>Logo Design</li>
+          <li>Brand Identity Systems</li>
+          <li>Consistent Aesthetics</li>
+          <li>Booklet & Publication Design</li>
+          <li>Product Design</li>
+        </ul>
+      </div>
+      <div class="service-card">
+        <div class="service-num">03</div>
+        <h3>Digital Content</h3>
+        <p>Visual storytelling, cinematic reels, and creative direction that translate design intent into narrative — the lines that connect dots people feel but usually miss.</p>
+        <ul class="service-list">
+          <li>Cinematic Reels & Video</li>
+          <li>Visual Storytelling</li>
+          <li>Art Direction</li>
+          <li>Creative Direction</li>
+          <li>Motion Design</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="section-label">Selected Work</div>
+    <h2 class="section-title">Recent projects</h2>
+    <p class="section-sub">
+      Each project is treated as a unique narrative — developed through close collaboration, combining design thinking with advanced technology.
+    </p>
+    <div class="work-grid">
+
+      <a class="work-item" href="https://status-co.com" target="_blank" rel="noopener">
+        <div class="work-meta">
+          <span class="work-year">2026</span>
+          <span class="work-arrow">↗</span>
+        </div>
+        <div class="work-title">Status CO</div>
+        <div class="work-tags">
+          <span class="work-tag">3D Website</span>
+          <span class="work-tag">Identity</span>
+          <span class="work-tag">Exhibition Space</span>
+          <span class="work-tag">Motion</span>
+        </div>
+        <p class="work-desc">
+          A unified spatial, digital, and experiential system. 3D exhibition environment, brand identity, packaging, and motion reels — positioning the brand as a collectible archive.
+        </p>
+      </a>
+
+      <a class="work-item" href="https://laila.nyc" target="_blank" rel="noopener">
+        <div class="work-meta">
+          <span class="work-year">2026</span>
+          <span class="work-arrow">↗</span>
+        </div>
+        <div class="work-title">Laila</div>
+        <div class="work-tags">
+          <span class="work-tag">Landing Page</span>
+          <span class="work-tag">Interface Design</span>
+          <span class="work-tag">Motion</span>
+        </div>
+        <p class="work-desc">
+          A cinematic digital gateway for an action-first NYC dating app — fluid motion, interactive archives, sophisticated nocturnal aesthetic. Positioned as a premium lifestyle destination.
+        </p>
+      </a>
+
+      <a class="work-item" href="https://novantatre.lu" target="_blank" rel="noopener">
+        <div class="work-meta">
+          <span class="work-year">2025–2026</span>
+          <span class="work-arrow">↗</span>
+        </div>
+        <div class="work-title">Novantatre</div>
+        <div class="work-tags">
+          <span class="work-tag">Architectural Film</span>
+          <span class="work-tag">Visual Storytelling</span>
+        </div>
+        <p class="work-desc">
+          Series of architectural film reels presenting selected projects in cinematic format — sequential archive-like narratives guiding the viewer through drawings, spatial layers, and materiality.
+        </p>
+      </a>
+
+      <a class="work-item" href="https://decentralize.design" target="_blank" rel="noopener">
+        <div class="work-meta">
+          <span class="work-year">2025</span>
+          <span class="work-arrow">↗</span>
+        </div>
+        <div class="work-title">Decentralize Design</div>
+        <div class="work-tags">
+          <span class="work-tag">Interactive Website</span>
+          <span class="work-tag">Logo</span>
+          <span class="work-tag">Cinematic</span>
+        </div>
+        <p class="work-desc">
+          "Clockwork" visual identity, interactive website, and a 2-minute cinematic showcase — merging motion graphics with spatial documentation to articulate the studio's technical process.
+        </p>
+      </a>
+
+      <a class="work-item" href="https://daspieces.com" target="_blank" rel="noopener">
+        <div class="work-meta">
+          <span class="work-year">2025</span>
+          <span class="work-arrow">↗</span>
+        </div>
+        <div class="work-title">DAS Pieces</div>
+        <div class="work-tags">
+          <span class="work-tag">Digital Narrative</span>
+          <span class="work-tag">Visual World</span>
+          <span class="work-tag">Product</span>
+        </div>
+        <p class="work-desc">
+          A digital visual world built around a minimal lamp collection — each piece situated within its own atmosphere, expressing the brand's relationship with light and space.
+        </p>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-grid">
+      <div class="about-text">
+        <div class="section-label">About</div>
+        <h2 class="section-title">Space as<br />narrative</h2>
+        <p>
+          Virtually Ever After is a creative platform that reimagines how we experience architecture and space in the digital age. Founded in Luxembourg, the studio blends spatial design, real-time 3D environments, and emerging technologies like AI and WebXR to craft immersive, interactive experiences that go far beyond traditional visualisations.
+        </p>
+        <p>
+          Our mission is to dissolve the boundaries between physical and digital spaces — turning static environments into living, navigable, and story-driven worlds.
+        </p>
+        <p>
+          We work with architects, developers, curators, brands, and institutions ready to embrace the future of spatial storytelling. Every project is treated as a unique narrative — developed through close collaboration.
+        </p>
+      </div>
+      <div class="about-founder">
+        <div class="founder-role">Founder</div>
+        <div class="founder-name">Deniz Agaoglu</div>
+        <p class="founder-bio">
+          Architect and digital designer exploring the intersection between physical spaces and virtual environments. In 2025, she founded Virtually Ever After — a practice dedicated to crafting sensorial, narrative-driven virtual spaces through a multidisciplinary approach merging architecture, technology, and visual culture.
+        </p>
+        <div class="founder-credentials">
+          <div class="credential">M.Arch, Architecture & Urban Design — Politecnico di Milano</div>
+          <div class="credential">B.Arch, Architecture — Istanbul Bilgi University</div>
+          <div class="credential">co.arch studio, Milan — Furniture to urban-scale design</div>
+          <div class="credential">Based in Luxembourg · Active internationally</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- VERA SECTION -->
+  <section class="vera-section">
+    <div class="vera-inner">
+      <div class="vera-chat-preview">
+        <div class="vcp-header">
+          <div class="vcp-mark">
+            <svg viewBox="0 0 24 24"><path d="M12 2L22 12L12 22L2 12Z"/></svg>
+          </div>
+          <div>
+            <div class="vcp-name">Vera · Virtually Ever After</div>
+            <div class="vcp-status">● Online</div>
+          </div>
+        </div>
+        <div class="vcp-body">
+          <div class="vcp-msg">Hello — I'm Vera, your guide to Virtually Ever After. What can I help you explore?</div>
+          <div class="vcp-msg user">What kind of projects do you work on?</div>
+          <div class="vcp-msg">VEA works across architecture, fashion, tech, and cultural institutions — anywhere a project has a spatial dimension that deserves a digital life. From interactive 3D websites to cinematic reels and full brand identities.</div>
+          <div class="vcp-msg user">How do we start?</div>
+          <div class="vcp-msg">A brief conversation is the best first step. Tell me about your project and I'll point you in the right direction — or connect you directly with the team at hello@virtuallyeverafter.xyz.</div>
+        </div>
+      </div>
+      <div class="vera-info">
+        <div class="section-label">Vera · AI Guide</div>
+        <h2 class="section-title">Ask anything<br />about VEA</h2>
+        <p>
+          Vera is available around the clock to answer questions about VEA's services, past projects, process, and how we might collaborate — with tailored responses for your specific context.
+        </p>
+        <button class="btn btn-accent"
+                onclick="document.getElementById('vea-fab').click()"
+                style="margin-top:8px">
+          Start a Conversation
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Let's talk<br />about your project</h2>
+      <p>
+        Whether you have a detailed brief or just the beginning of an idea, we're glad to hear it. The best ideas often start with a simple conversation.
+      </p>
+      <div class="contact-items">
+        <a class="contact-item" href="mailto:hello@virtuallyeverafter.xyz">
+          <span class="contact-item-label">Email</span>
+          hello@virtuallyeverafter.xyz
+        </a>
+        <a class="contact-item" href="https://virtuallyeverafter.xyz" target="_blank" rel="noopener">
+          <span class="contact-item-label">Web</span>
+          virtuallyeverafter.xyz
+        </a>
+        <a class="contact-item" href="https://www.instagram.com/virtuallyeverafter" target="_blank" rel="noopener">
+          <span class="contact-item-label">Instagram</span>
+          @virtuallyeverafter
+        </a>
+        <div class="contact-item" style="cursor:default">
+          <span class="contact-item-label">Location</span>
+          Luxembourg · Active internationally
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L22 12L12 22L2 12Z"/></svg>
+      Virtually Ever After
+    </div>
+    <div class="copy">© 2025 Virtually Ever After. All rights reserved.</div>
+  </footer>
+
+  <!-- CHATBOT WIDGET -->
+  <script src="chatbot.js"></script>
+
+</body>
+</html>

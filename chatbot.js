@@ -545,8 +545,8 @@ Take care.`,
   const CSS = `
     #vea-fab {
       position: fixed;
-      bottom: 3px;
-      right: 3px;
+      bottom: 8px;
+      right: 8px;
       z-index: 99999;
       width: 54px;
       height: 54px;
@@ -579,11 +579,11 @@ Take care.`,
 
     #vea-window {
       position: fixed;
-      bottom: 65px;
-      right: 3px;
+      bottom: 70px;
+      right: 8px;
       z-index: 99998;
       width: 380px;
-      max-width: calc(100vw - 12px);
+      max-width: calc(100vw - 22px);
       height: 560px;
       max-height: calc(100dvh - 80px);
       background: rgba(255,255,255,0.6);
@@ -824,8 +824,8 @@ Take care.`,
         transition: none;
       }
       #vea-fab {
-        bottom: 3px;
-        right: 3px;
+        bottom: 8px;
+        right: 8px;
         width: 44px;
         height: 44px;
       }
@@ -963,29 +963,10 @@ Take care.`,
 
   /* ─────────────────────────────────────────
      INIT
+     Chat history lives only in the DOM (in-memory).
+     → Survives close/reopen within the same page load.
+     → Clears automatically on page refresh (no storage used).
   ───────────────────────────────────────── */
-  /* ─────────────────────────────────────────
-     SESSION PERSISTENCE (survives close/reopen; cleared on page refresh)
-  ───────────────────────────────────────── */
-  const SESSION_KEY = "vea-session-" + location.pathname;
-
-  function sessionSave(role, html) {
-    try {
-      const msgs = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "[]");
-      msgs.push({ role, html });
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(msgs));
-    } catch(e) {}
-  }
-
-  function sessionRestore(msgsEl) {
-    try {
-      const msgs = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "[]");
-      if (!msgs.length) return false;
-      for (const m of msgs) appendMsg(msgsEl, m.role, m.html);
-      return true;
-    } catch(e) { return false; }
-  }
-
   function init() {
     const ui    = buildWidget();
     let isOpen  = false;
@@ -1006,29 +987,24 @@ Take care.`,
 
       if (!greeted) {
         greeted = true;
-        // Try restoring a previous session first
-        const restored = sessionRestore(ui.msgs);
-        if (!restored) {
-          // Fresh session — show greeting
+        // First open — show greeting with a short typing delay
+        setTimeout(() => {
+          const t = showTyping(ui.msgs);
           setTimeout(() => {
-            const t = showTyping(ui.msgs);
-            setTimeout(() => {
-              t.remove();
-              const greetHtml = mdToHtml(CFG.greeting);
-              appendMsg(ui.msgs, "bot", greetHtml);
-              sessionSave("bot", greetHtml);
-              setQuickReplies(ui.qr, [
-                "What is VEA?",
-                "What services do you offer?",
-                "Show me your work",
-                "Who founded VEA?",
-              ], handleSend);
-            }, 800);
-          }, 150);
-        } else {
-          // Restored — scroll to bottom
-          ui.msgs.scrollTop = ui.msgs.scrollHeight;
-        }
+            t.remove();
+            const greetHtml = mdToHtml(CFG.greeting);
+            appendMsg(ui.msgs, "bot", greetHtml);
+            setQuickReplies(ui.qr, [
+              "What is VEA?",
+              "What services do you offer?",
+              "Show me your work",
+              "Who founded VEA?",
+            ], handleSend);
+          }, 800);
+        }, 150);
+      } else {
+        // Already opened — messages live in DOM, just scroll to bottom
+        ui.msgs.scrollTop = ui.msgs.scrollHeight;
       }
     }
 
@@ -1050,7 +1026,6 @@ Take care.`,
       ui.qr.innerHTML = "";
       const userHtml = escapeHtml(text);
       appendMsg(ui.msgs, "user", userHtml);
-      sessionSave("user", userHtml);
       ui.input.value = "";
       ui.input.style.height = "auto";
       ui.input.blur(); // dismiss mobile keyboard after send
@@ -1078,7 +1053,6 @@ Try rephrasing your question, or use the suggestions below. For anything specifi
 
         const botHtml = mdToHtml(reply);
         appendMsg(ui.msgs, "bot", botHtml);
-        sessionSave("bot", botHtml);
         setQuickReplies(ui.qr, nextQR, handleSend);
       }, delay);
     }
@@ -1119,15 +1093,20 @@ Try rephrasing your question, or use the suggestions below. For anything specifi
       window.visualViewport.addEventListener("scroll", onVVChange);
     }
 
-    /* ── Swipe-down from top to close (mobile) ── */
+    /* ── Swipe-down from header area to close (mobile) ── */
+    // Only eligible when the touch STARTS inside the top 60px of the chat window.
+    // This prevents accidental closes while scrolling the message list.
     let _touchY0 = 0;
+    let _swipeEligible = false;
     ui.win.addEventListener("touchstart", (e) => {
+      const rect = ui.win.getBoundingClientRect();
       _touchY0 = e.touches[0].clientY;
+      _swipeEligible = (_touchY0 - rect.top) < 60;
     }, { passive: true });
     ui.win.addEventListener("touchend", (e) => {
+      if (!_swipeEligible || !isOpen) return;
       const dy = e.changedTouches[0].clientY - _touchY0;
-      const dx = Math.abs(e.changedTouches[0].clientX - e.touches[0]?.clientX || 0);
-      if (dy > 72 && isOpen) close();
+      if (dy > 120) close();
     }, { passive: true });
   }
 

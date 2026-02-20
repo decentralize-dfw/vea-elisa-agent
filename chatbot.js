@@ -67,7 +67,7 @@ We work with architects, developers, curators, brands, and institutions ready to
 
     /* ── SERVICES OVERVIEW ── */
     {
-      tags: ["service","offer","what do you do","what can you do","help","capability","capabilities","provide","work","what you do"],
+      tags: ["service","services","offer","offers","what do you do","what can you do","help","capability","capabilities","provide","work","what you do","solutions","packages"],
       reply: `VEA's work spans three core disciplines:
 
 **01 — Worldbuilding**
@@ -260,6 +260,19 @@ She collaborates internationally with architects, cultural institutions, and cre
       next: ["What is VEA?", "Show me your work", "How do we start?"],
     },
 
+    /* ── VERA / BOT ── */
+    {
+      tags: ["vera","who are you","who is vera","bot","chatbot","ai","assistant","robot","guide","helper"],
+      reply: `I'm **Vera** — VEA's AI guide.
+
+I'm here to answer questions about Virtually Ever After: what the studio does, past projects, the team, pricing, how to get started — anything you want to know.
+
+I'm not a general-purpose AI; I know VEA inside out. If I can't answer something, I'll point you directly to the team.
+
+What would you like to explore?`,
+      next: ["What is VEA?", "What services do you offer?", "Show me your work", "How do we start?"],
+    },
+
     /* ── WHERE / LOCATION ── */
     {
       tags: ["where","location","based","luxembourg","city","country","office","studio"],
@@ -307,7 +320,7 @@ Every project is browser-based. No app downloads, no hardware dependency.`,
 
     /* ── PROCESS / HOW IT WORKS ── */
     {
-      tags: ["process","how","work together","collaboration","approach","method","step","begin","workflow","timeline","start","getting started"],
+      tags: ["process","how","work together","collaboration","collaborate","approach","method","step","begin","workflow","timeline","start","getting started","ready","next step","next steps","move forward","kick off","kickoff","onboard"],
       reply: `VEA's process is built around **close collaboration** — every project is treated as a unique narrative.
 
 **01 Discovery**
@@ -328,7 +341,7 @@ The best place to start is a conversation. Want to tell me about your project?`,
 
     /* ── PRICING ── */
     {
-      tags: ["price","pricing","cost","how much","fee","budget","rate","quote","package","afford","charge","invoice"],
+      tags: ["price","pricing","prices","cost","costs","how much","fee","fees","budget","rate","rates","quote","package","afford","charge","invoice","expensive","cheap","affordable"],
       reply: `Pricing at VEA is **project-specific** — we don't work with fixed packages, because no two projects have the same scope.
 
 What shapes a proposal:
@@ -344,7 +357,7 @@ Reach out at **hello@virtuallyeverafter.xyz** or through the contact form on the
 
     /* ── CONTACT ── */
     {
-      tags: ["contact","reach","email","phone","message","talk","connect","get in touch","speak","meet","book","call","inquiry","enquiry","hello"],
+      tags: ["contact","reach","email","phone","message","talk","connect","get in touch","speak","meet","book","call","inquiry","enquiry","hello","instagram","social","dm","linkedin","twitter"],
       reply: `To start a conversation with VEA:
 
 📧 **hello@virtuallyeverafter.xyz**
@@ -428,9 +441,9 @@ Take care.`,
         } else if (tokens.includes(tag)) {
           score += 2;
         }
-        // Partial token overlap for single-word tags
+        // Partial token overlap for single-word tags (bidirectional stemming)
         for (const t of tokens) {
-          if (t.length > 3 && tag.startsWith(t)) score += 1;
+          if (t.length > 3 && (tag.startsWith(t) || t.startsWith(tag))) score += 1;
         }
       }
       if (score > bestScore) {
@@ -532,14 +545,16 @@ Take care.`,
   const CSS = `
     #vea-fab {
       position: fixed;
-      bottom: 28px;
-      right: 28px;
+      bottom: 3px;
+      right: 3px;
       z-index: 99999;
       width: 54px;
       height: 54px;
       border-radius: 50%;
-      background: ${T.fabBg};
-      border: 1px solid ${T.fabBorder};
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,0.9);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -547,7 +562,7 @@ Take care.`,
       box-shadow: ${T.shadow};
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       outline: none;
-      color: ${T.fabColor};
+      color: #111111;
     }
     #vea-fab:hover {
       transform: scale(1.06);
@@ -562,26 +577,15 @@ Take care.`,
       transition: opacity 0.15s;
     }
 
-    #vea-badge {
-      position: absolute;
-      top: -3px;
-      right: -3px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: ${T.accent};
-      border: 2px solid ${T.fabBg};
-    }
-
     #vea-window {
       position: fixed;
-      bottom: 96px;
-      right: 28px;
+      bottom: 65px;
+      right: 3px;
       z-index: 99998;
       width: 380px;
-      max-width: calc(100vw - 40px);
+      max-width: calc(100vw - 12px);
       height: 560px;
-      max-height: calc(100dvh - 120px);
+      max-height: calc(100dvh - 80px);
       background: rgba(255,255,255,0.6);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -820,8 +824,8 @@ Take care.`,
         transition: none;
       }
       #vea-fab {
-        bottom: 16px;
-        right: 16px;
+        bottom: 3px;
+        right: 3px;
         width: 44px;
         height: 44px;
       }
@@ -853,10 +857,9 @@ Take care.`,
     fab.setAttribute("aria-label", "Chat with Virtually Ever After");
     fab.innerHTML = `
       <span id="vea-fab-icon">${ICON_CHAT}</span>
-      <span id="vea-badge"></span>
     `;
     fab.querySelector("#vea-fab-icon svg").style.cssText =
-      `width:22px;height:22px;color:${T.fabColor}`;
+      `width:22px;height:22px;color:#111111`;
 
     // Window
     const win = document.createElement("div");
@@ -879,7 +882,6 @@ Take care.`,
 
     return {
       fab,
-      badge:    fab.querySelector("#vea-badge"),
       win,
       closeBtn: win.querySelector("#vea-close-btn"),
       msgs:     win.querySelector("#vea-msgs"),
@@ -993,13 +995,12 @@ Take care.`,
     function open() {
       isOpen = true;
       ui.win.classList.remove("vea-closed");
-      ui.badge.style.display = "none";
       // On mobile, hide FAB (close button is inside the window)
       if (window.innerWidth <= 440) {
         ui.fab.style.display = "none";
       } else {
         ui.fab.querySelector("#vea-fab-icon").innerHTML =
-          `<svg viewBox="0 0 24 24" width="18" height="18" style="fill:${T.fabColor}"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
+          `<svg viewBox="0 0 24 24" width="18" height="18" style="fill:#111111"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
       }
       // Do NOT focus the input — keyboard should not open automatically
 
@@ -1038,7 +1039,7 @@ Take care.`,
       ui.fab.style.display = "";
       ui.fab.querySelector("#vea-fab-icon").innerHTML = ICON_CHAT;
       ui.fab.querySelector("#vea-fab-icon svg").style.cssText =
-        `width:22px;height:22px;color:${T.fabColor}`;
+        `width:22px;height:22px;color:#111111`;
     }
 
     /* ── Handle a user message ── */
@@ -1062,7 +1063,15 @@ Take care.`,
         const entry  = findBestEntry(text);
         const reply  = entry
           ? entry.reply
-          : `That's a thoughtful question. For the most accurate answer, reach out directly to the team:\n\n📧 **hello@virtuallyeverafter.xyz**\n\nOr ask me something else — I'm happy to tell you more about VEA's work and services.`;
+          : `I didn't quite catch that. Here's what I can help with:
+
+— **About VEA** — who we are, our mission, the team behind it
+— **Services** — Worldbuilding, Identity Building, Digital Content
+— **Past projects** — Status CO, Laila, Novantatre, DAS Pieces, Decentralize Design
+— **Process & pricing** — how we work, what shapes a proposal
+— **Location & contact** — Luxembourg-based, active internationally
+
+Try rephrasing your question, or use the suggestions below. For anything specific, the team is always reachable at 📧 **hello@virtuallyeverafter.xyz**`;
         const nextQR = entry && entry.next && entry.next.length > 0
           ? entry.next
           : ["What services do you offer?", "Show me your work", "How do we start?"];
